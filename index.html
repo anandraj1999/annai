@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis Trade AI - Voice Activated Pattern Detection Agent</title>
+    <!-- Meta Descriptions for SEO -->
+    <meta name="description" content="State-of-the-art voice activated AI agent specializing in real-time financial trading patterns, technical analysis, and smart trade setups.">
+    <!-- CSS stylesheet link -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- TradingView Lightweight Charts CDN -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <div id="app-container">
+        
+        <!-- HEADER -->
+        <header>
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i data-lucide="cpu"></i>
+                </div>
+                <div class="logo-text">AEGIS TRADE AI</div>
+                <div class="logo-badge">AGENT PRO</div>
+            </div>
+            
+            <div class="header-status">
+                <div class="market-ticker">
+                    <div class="ticker-item">
+                        <i data-lucide="trending-up" class="ticker-change up" style="width: 14px;"></i>
+                        <span class="ticker-pair">BTCUSD</span>
+                        <span class="ticker-price" id="header-btc-price">$67,420.50</span>
+                        <span class="ticker-change up" id="header-btc-change">+3.45%</span>
+                    </div>
+                    <div style="width: 1px; height: 16px; background-color: var(--border);"></div>
+                    <div class="ticker-item">
+                        <i data-lucide="trending-down" class="ticker-change down" style="width: 14px;"></i>
+                        <span class="ticker-pair">ETHUSD</span>
+                        <span class="ticker-price" id="header-eth-price">$3,485.10</span>
+                        <span class="ticker-change down" id="header-eth-change">-0.82%</span>
+                    </div>
+                </div>
+                
+                <div class="ai-status-indicator">
+                    <div class="status-dot"></div>
+                    <span id="voice-engine-status">AI System Active</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- SIDEBAR (LEFT) -->
+        <sidebar>
+            <div>
+                <span class="section-label">Trading Pairs</span>
+                <div class="pair-selector">
+                    <div class="pair-pill active" onclick="switchPair('BTCUSD')">
+                        <span class="pair-name">BTC / USD</span>
+                        <span class="pair-desc">Bitcoin / US Dollar</span>
+                    </div>
+                    <div class="pair-pill" onclick="switchPair('ETHUSD')">
+                        <span class="pair-name">ETH / USD</span>
+                        <span class="pair-desc">Ethereum / US Dollar</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <span class="section-label">AI Pattern Scanner</span>
+                <div class="pattern-list">
+                    <div class="pattern-card active" id="pattern-double-bottom" onclick="selectPattern('double-bottom')">
+                        <div class="pattern-card-header">
+                            <span class="pattern-name">Double Bottom</span>
+                            <span class="pattern-badge bullish">Bullish Reversal</span>
+                        </div>
+                        <p class="pattern-desc">Trend reversal signal forming at key support levels.</p>
+                    </div>
+                    
+                    <div class="pattern-card" id="pattern-head-shoulders" onclick="selectPattern('head-shoulders')">
+                        <div class="pattern-card-header">
+                            <span class="pattern-name">Head and Shoulders</span>
+                            <span class="pattern-badge bearish">Bearish Reversal</span>
+                        </div>
+                        <p class="pattern-desc">Major topping formation signaling descending trend.</p>
+                    </div>
+                    
+                    <div class="pattern-card" id="pattern-bull-flag" onclick="selectPattern('bull-flag')">
+                        <div class="pattern-card-header">
+                            <span class="pattern-name">Bull Flag</span>
+                            <span class="pattern-badge bullish">Continuation</span>
+                        </div>
+                        <p class="pattern-desc">Short consolidation period preceding next markup leg.</p>
+                    </div>
+
+                    <div class="pattern-card" id="pattern-cup-handle" onclick="selectPattern('cup-handle')">
+                        <div class="pattern-card-header">
+                            <span class="pattern-name">Cup and Handle</span>
+                            <span class="pattern-badge bullish">Bullish Breakout</span>
+                        </div>
+                        <p class="pattern-desc">U-shaped recovery followed by a slight downward handles consolidation.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
+                <div class="menu-item" onclick="openHelpGuide()">
+                    <i data-lucide="book-open"></i>
+                    <span>Pattern Guide</span>
+                </div>
+                <div class="menu-item" onclick="resetDemo()">
+                    <i data-lucide="refresh-cw"></i>
+                    <span>Reset Simulation</span>
+                </div>
+            </div>
+        </sidebar>
+
+        <!-- MAIN AREA (MIDDLE) -->
+        <main>
+            <!-- TradingView Chart Container -->
+            <div class="chart-section">
+                <div class="chart-header">
+                    <div class="chart-title-group">
+                        <span class="chart-title" id="active-chart-title">BTCUSD / 4-Hour / Candlestick</span>
+                        <span class="chart-timeframe">4H</span>
+                    </div>
+                    <div class="chart-controls">
+                        <button class="chart-btn active" id="btn-candles">Candles</button>
+                        <button class="chart-btn" id="btn-indicators">Indicators Overlay</button>
+                    </div>
+                </div>
+                <!-- Div where TradingView chart will mount -->
+                <div class="chart-canvas-container" id="tv-chart-container"></div>
+            </div>
+
+            <!-- Technical Indicators Summary -->
+            <div class="indicators-panel">
+                <div class="indicator-card">
+                    <span class="indicator-label">RSI (14)</span>
+                    <span class="indicator-value" id="rsi-val">48.62</span>
+                    <span class="indicator-status neutral" id="rsi-status">Neutral Consolidation</span>
+                </div>
+                <div class="indicator-card">
+                    <span class="indicator-label">MACD (12, 26, 9)</span>
+                    <span class="indicator-value" id="macd-val">+142.10</span>
+                    <span class="indicator-status bullish" id="macd-status">Bullish Crossover</span>
+                </div>
+                <div class="indicator-card">
+                    <span class="indicator-label">Support Level</span>
+                    <span class="indicator-value" id="support-val">$64,500</span>
+                    <span class="indicator-status bullish" id="support-status">Strong Demand Zone</span>
+                </div>
+                <div class="indicator-card">
+                    <span class="indicator-label">Resistance Level</span>
+                    <span class="indicator-value" id="resistance-val">$68,200</span>
+                    <span class="indicator-status bearish" id="resistance-status">High Sell Pressure</span>
+                </div>
+            </div>
+
+            <!-- Trade Strategy Setup -->
+            <div class="trade-setup-section">
+                <div class="trade-setup-header">
+                    <div class="setup-title">
+                        <i data-lucide="briefcase" style="color: var(--accent-violet);"></i>
+                        <span>AI Recommended Trade Setup</span>
+                    </div>
+                    <span class="setup-signal buy" id="setup-action-badge">BUY / LONG</span>
+                </div>
+                <div class="setup-grid">
+                    <div class="setup-item">
+                        <span class="setup-item-label">Entry Level</span>
+                        <span class="setup-item-value entry" id="setup-entry">$66,100</span>
+                    </div>
+                    <div class="setup-item">
+                        <span class="setup-item-label">Stop Loss Target</span>
+                        <span class="setup-item-value stop" id="setup-stop">$64,200</span>
+                    </div>
+                    <div class="setup-item">
+                        <span class="setup-item-label">Take Profit Target</span>
+                        <span class="setup-item-value target" id="setup-target">$70,500</span>
+                    </div>
+                    <div class="setup-item">
+                        <span class="setup-item-label">Probability Score</span>
+                        <span class="setup-item-value" id="setup-prob" style="color: var(--accent-cyan)">82% Confidence</span>
+                    </div>
+                </div>
+
+                <div class="ratio-bar-container">
+                    <div class="ratio-labels">
+                        <span>Risk Target: 1.0x</span>
+                        <span id="setup-rr-ratio">Risk-Reward: 2.3x</span>
+                        <span>Reward Target: 2.3x</span>
+                    </div>
+                    <div class="ratio-bar-bg">
+                        <div class="ratio-bar-fill" id="setup-ratio-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ASIDE / AI AGENT VOICE CONTROL ROOM (RIGHT) -->
+        <aside>
+            <!-- Voice Assistant Console -->
+            <div class="voice-assistant-panel">
+                <div class="voice-status-heading" id="voice-heading">Aegis Voice Assistant</div>
+                
+                <button class="voice-trigger-btn" id="voice-btn" title="Tap to Speak (Voice Control)">
+                    <i data-lucide="mic" id="voice-mic-icon"></i>
+                </button>
+                
+                <div class="soundwave-container">
+                    <canvas class="soundwave-canvas" id="voice-wave"></canvas>
+                </div>
+                
+                <div class="voice-feedback" id="voice-speech-feedback">
+                    "Click the microphone to speak, or type commands below. E.g. 'Analyze the chart'."
+                </div>
+            </div>
+
+            <!-- AI Interactive Chat Log -->
+            <div class="ai-chat-panel">
+                <div class="chat-header-bar">
+                    <div class="chat-header-title">
+                        <i data-lucide="message-square" style="width:16px;"></i>
+                        <span>AI Analysis Stream</span>
+                    </div>
+                    <button class="voice-read-btn" id="mute-btn" title="Mute AI Speech Synthesis">
+                        <i data-lucide="volume-2" id="mute-icon"></i>
+                        <span id="mute-text">Speech: ON</span>
+                    </button>
+                </div>
+                
+                <div class="chat-history" id="chat-history-container">
+                    <!-- Default Agent Welcome Message -->
+                    <div class="chat-bubble agent">
+                        <div class="chat-bubble-meta">
+                            <span>Aegis Trading AI</span>
+                            <span>Just now</span>
+                        </div>
+                        Hello! I am Aegis, your AI Trading Pattern Specialist. 
+                        I've analyzed the <strong>BTC/USD</strong> 4-Hour chart and detected a completed <strong>Double Bottom</strong> pattern forming around the $64,500 support region.
+                        This is a strong bullish reversal signal.
+                        <br><br>
+                        You can ask me questions such as:
+                        <ul>
+                            <li><em>"Analyze this chart"</em></li>
+                            <li><em>"Give me a trade setup"</em></li>
+                            <li><em>"Explain Double Bottom"</em></li>
+                        </ul>
+                        <button class="voice-read-btn" onclick="speakText(this.parentElement.innerText)">
+                            <i data-lucide="volume-2"></i> Read out
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Input System -->
+                <div class="chat-input-area">
+                    <input type="text" class="chat-text-input" id="chat-input" placeholder="Type a message or trading question...">
+                    <button class="chat-send-btn" id="chat-send-btn">
+                        <i data-lucide="send"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- Educational Pattern Dictionary Modal -->
+    <div class="help-guide-modal" id="help-guide">
+        <div class="help-modal-content">
+            <div class="help-modal-header">
+                <span class="help-modal-title">Trading Pattern Reference Library</span>
+                <button class="close-modal-btn" onclick="closeHelpGuide()">&times;</button>
+            </div>
+            <div class="help-modal-body">
+                
+                <div class="help-pattern-card">
+                    <div class="help-pattern-title-row">
+                        <span class="help-pattern-name">Double Bottom</span>
+                        <span class="pattern-badge bullish">Reversal</span>
+                    </div>
+                    <p class="help-pattern-strategy">
+                        <strong>Structure:</strong> Price drops twice to similar support levels, separated by a peak. The pattern is completed when price breaks above the peak ("neckline").
+                        <br><br>
+                        <strong>AI Strategy:</strong> Set buy entries just above neckline breakouts. Place stop losses below the lowest swing bottom. Set targets equal to neckline height.
+                    </p>
+                </div>
+
+                <div class="help-pattern-card">
+                    <div class="help-pattern-title-row">
+                        <span class="help-pattern-name">Head and Shoulders</span>
+                        <span class="pattern-badge bearish">Reversal</span>
+                    </div>
+                    <p class="help-pattern-strategy">
+                        <strong>Structure:</strong> Forms three peaks: a higher peak (head) in between two lower, roughly equal peaks (shoulders). Neckline connects the intermediate troughs.
+                        <br><br>
+                        <strong>AI Strategy:</strong> Enter short trades upon a clean breakdown below the neckline. Place stops above the right shoulder peak. Take profit targets equal head height measured downwards.
+                    </p>
+                </div>
+
+                <div class="help-pattern-card">
+                    <div class="help-pattern-title-row">
+                        <span class="help-pattern-name">Bull Flag</span>
+                        <span class="pattern-badge bullish">Continuation</span>
+                    </div>
+                    <p class="help-pattern-strategy">
+                        <strong>Structure:</strong> Strong upward pole move, followed by a slight downward-sloping consolidation channel (the flag). Breakout above channel signals continuation.
+                        <br><br>
+                        <strong>AI Strategy:</strong> Enter at the breakout point of upper flag border. Place stop loss beneath the lowest flag border. Measure pole size to calculate target levels.
+                    </p>
+                </div>
+
+                <div class="help-pattern-card">
+                    <div class="help-pattern-title-row">
+                        <span class="help-pattern-name">Cup and Handle</span>
+                        <span class="pattern-badge bullish">Continuation</span>
+                    </div>
+                    <p class="help-pattern-strategy">
+                        <strong>Structure:</strong> A rounded bowl-shaped accumulation basin followed by a brief downward flag (handle). Completion is marked by breaking above bowl lip resistance.
+                        <br><br>
+                        <strong>AI Strategy:</strong> Enter buy/long setups on breakout from handle resistance. Stop loss levels placed mid-way down the handle. Target height is depth of the cup.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Logic Script -->
+    <script src="app.js"></script>
+</body>
+</html>
